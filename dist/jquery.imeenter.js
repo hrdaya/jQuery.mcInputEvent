@@ -7,46 +7,67 @@
 
 (function ($) {
     'use strict';
+    // プラグイン名
     var pluginName = 'imeEnter';
+
+    // プラグイン本体
     var Plugin = function (elm) {
         this.$elm = elm;
         this.on();
     };
 
+    // プラグインのプロトタイプ
     Plugin.prototype = {
+        // プラグインのイベント捕捉有効化
         on: function () {
             var _this = this;
+
+            // タイマー用
             var timer;
+
+            // keyupのエンターキー発行用
             var evt = $.Event('keyup');
             evt.keyCode = 13;
-            var imeEvent = false;
-            var upEvent = false;
+
+            // IME入力中かどうかを判断するフラグ
+            var imeFlag = false;
+
+            // キーアップイベントが発火したかどうかを判断するフラグ
+            var keyUpFlag = false;
+
+            // 捕捉するキーイベント
             var keyEvents = [
                 'keydown.' + pluginName,
                 'keypress.' + pluginName,
                 'keyup.' + pluginName
             ];
+
+            // カット・ペーストのイベント
             var otherEvents = [
                 'cut.' + pluginName,
                 'paste.' + pluginName
             ];
-            // 一旦イベントの削除
+            // 一旦イベントのoff
             this.off();
-            // 変更、ペースト、カット時
+
+            // カット・ペースト時
             _this.$elm.on(otherEvents.join(' '), function (event) {
                 var $elm = $(this);
+                // 右クリックでのカット・ペーストのイベント捕捉
+                // キーボードショートカットではこのコードと別に「keyup（13）」が発火する模様
                 setTimeout(function () {
-                    // IME入力中の解除
-                    imeEvent = false;
                     // Keyupイベントの発行
                     $elm.trigger(evt);
                 }, 0);
             });
-            // キー入力時のフィルタリング
+
+            // キーイベント
             _this.$elm.on(keyEvents.join(' '), function (event) {
                 var $elm = $(this);
-                var type = event.type;
+
+                // イベント発火時のキーコード
                 var keyCode = event.keyCode;
+
                 // イベントを実行しないKeyupキーコード
                 var exceptKeys = [
                     9, // TAB
@@ -75,73 +96,89 @@
                     242, // 「カタカナ・ひらがな」
                     243, 244  // 「半角・全角」
                 ];
-                switch (type) {
+
+                // イベントのタイプごとに処理
+                //　通常は「keydown」→「keypress」→「keyup」の順にイベントが発火する
+                switch (event.type) {
                     case 'keydown':
-                        imeEvent = false;
+                        // 一旦IME入力中フラグのリセット
+                        imeFlag = false;
+
                         if (keyCode === 229) {
-                            // キーコードが229の場合はIME入力中とみなす
-                            imeEvent = true;
-                            // Chrome対策
-                            // 最後のキー入力から一定時間後にkeyupイベントの
-                            // 無い場合は入力確定とする
-                            // フィルタリング処理を行う
+                            // キーコードが229の場合はIME入力中とみなす（Chrome・IE用）
+                            // IME入力中フラグのセット
+                            imeFlag = true;
+
+                            // 設定していたタイマーのリセット
                             clearTimeout(timer);
+
+                            // Chrome対策
+                            // キー入力から300ミリ秒後にkeyupイベントの
+                            // 無い場合は入力確定とする（調整必要）
                             timer = setTimeout(function () {
-                                if (!upEvent) {
-                                    // IME入力中の解除
-                                    imeEvent = false;
+                                if (!keyUpFlag) {
                                     // Keyupイベントの発行
                                     $elm.trigger(evt);
                                 }
                             }, 300);
-                            upEvent = false;
+
+                            // キーアップフラグのリセット
+                            keyUpFlag = false;
                         } else if (keyCode === 0) {
-                            // FireFoxは最初のキー入力でキーコード0を発行したあと
-                            // エンターキーを押すまでキーイベントが起きない
-                            imeEvent = true;
+                            // キーコードが0の場合はIME入力開始とみなす（FF用）
+                            // エンターキーを押すまでキーイベントが一切起きない
+                            // IME入力中フラグのセット
+                            imeFlag = true;
                         }
                         break;
                     case 'keypress':
                         // IME入力中はキープレスイベントが発行されないので
                         // このイベントが発行された場合はIME入力中以外とみなす
-                        imeEvent = false;
+                        imeFlag = false;
                         break;
                     case 'keyup':
-                        upEvent = true;
+                        // キーアップフラグのセット
+                        keyUpFlag = true;
+
+                        // 文字入力以外のキー入力は除外
                         if (exceptKeys.indexOf(keyCode) === -1) {
-                            if (imeEvent) {
+                            // IME入力中フラグがセットされているときの処理
+                            if (imeFlag) {
+                                // キーコードが13の時はIME入力完了とみなす
                                 if (keyCode === evt.keyCode) {
-                                    // IME入力中の解除
-                                    imeEvent = false;
-                                    $elm.trigger(evt);
+                                    // IME入力中フラグのリセット
+                                    imeFlag = false;
+                                    // イベントの発行
+                                    _this._trigger($elm);
                                 }
                             } else {
-                                // IME入力中以外
-                                var e = $.Event('enter.' + pluginName);
-                                $elm.trigger(e);
+                                // IME入力中以外にイベントの発行
+                                _this._trigger($elm);
                             }
                         }
                         break;
                 }
             });
         },
-        // フォームのイベントをリセット
+        // プラグインのイベント捕捉無効化
         off: function () {
             this.$elm.off('.' + pluginName);
         },
-        // プラグインの無効化
-        destroy: function ( ) {
+        // プラグインの破棄
+        destroy: function () {
             this.off();
             this.$elm.removeData(pluginName);
+        },
+        // イベントの発行
+        _trigger: function ($elm) {
+            var e = $.Event('enter.' + pluginName);
+            $elm.trigger(e);
         }
     };
 
     // プラグインの実行
     $.fn[pluginName] = function (method) {
-        var _this = this;
-        // 引数を取得
-        var args = Array.prototype.slice.call(arguments, 1);
-        _this.each(function (index, elm) {
+        this.each(function (index, elm) {
             var $elm = $(elm);
             // テキスト入力エリア以外には適用しない
             var tag = $elm.prop('tagName').toLowerCase();
@@ -178,7 +215,7 @@
                 case 'on':
                 case 'off':
                 case 'destroy':
-                    Plugin[method].apply(_this, args);
+                    data[method]();
                     break;
             }
         });
