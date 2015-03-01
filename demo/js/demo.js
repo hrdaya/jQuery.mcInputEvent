@@ -7,4 +7,9 @@ $(function () {
         var preStr = $('#pre').text();
         $('#pre').text(preStr !== '' ? preStr + '\n' + inputStr : inputStr);
     });
+
+    $('#btn-clear').on('click', function () {
+        $('#pre').text('');
+        $('.ime-enter').val('');
+    });
 });
