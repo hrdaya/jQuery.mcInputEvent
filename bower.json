@@ -1,0 +1,34 @@
+{
+    "name": "jQuery.imeEnter",
+    "description": "jQuery.imeEnter",
+    "version": "0.1.0",
+    "main": [
+        "dist/jquery.imeenter.js"
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "nbproject",
+        "test",
+        "demo",
+        "src",
+        "Gruntfile.js",
+        "package.json",
+        "index.html"
+    ],
+    "keywords": [
+        "javascript",
+        "js",
+        "ime"
+    ],
+    "authors": [
+        "yu-ki higa (https://github.com/hrdaya)"
+    ],
+    "homepage": "http://hrdaya.github.io/jQuery.imeEnter/",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/hrdaya/jQuery.imeEnter.git"
+    }
+}

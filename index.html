@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>jQuery.imeEnter</title>
+
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- jQuery、Bootstrapの読み込み -->
+        <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+        <!-- UltraDateの読み込み -->
+        <script src="src/jquery.imeenter.js"></script>
+
+        <!-- デモ用Javascript、cssの読み込み -->
+        <script src="demo/js/demo.js"></script>
+        <link rel="stylesheet" href="demo/css/demo.css">
+    </head>
+    <body>
+        <header class="navbar navbar-fixed-top navbar-blue">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#menu">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="#top" class="navbar-brand">jQuery.imeEnter</a>
+                </div>
+                <nav id="menu" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#summary">概要</a></li>
+                        <li><a href="#get-start">はじめ方</a></li>
+                        <li><a href="#demo">デモ</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <div id="top" class="docs-header text-center">
+            <div class="container">
+                <h1>jQuery.imeEnter</h1>
+                <p>
+                    jQuery.imeEnterはIME入力確定・カット・ペースト時にイベントが発火されるプラグインです。
+                    <br>
+                    IME入力中以外にはフィルタリング等を行いたくない場合に使用します。
+                </p>
+                <div id="github-link" class="">
+                    <a class="btn btn-lg btn-info-flat" href="https://github.com/hrdaya/jQuery.imeEnter">View the GitHub project</a>
+                </div>
+            </div>
+        </div>
+        <div id="wrapper" class="container">
+            <article id="summary" class="margin-top-xl">
+                <header>
+                    <h1>概要</h1>
+                </header>
+                <section>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h1>jQuery.imeEnterについて</h1>
+                        </div>
+                        <div class="panel-body">
+                            <h2>特徴</h2>
+                            <p>jQuery.imeEnterは次の時に「enter.imeEnter」というイベントが発火します</p>
+                            <ul>
+                                <li>IMEがoffの時の「keyup」した時</li>
+                                <li>IMEの入力が確定した時</li>
+                                <li>カットした時</li>
+                                <li>ペーストした時</li>
+                            </ul>
+                            <h2>適用されるエレメント</h2>
+                            <p>jQuery.imeEnterは次のエレメントにのみ有効になります</p>
+                            <ul>
+                                <li>textarea</li>
+                                <li>
+                                    input（ただし下記の「type」は除く）
+                                    <ul>
+                                        <li>password</li>
+                                        <li>radio</li>
+                                        <li>checkbox</li>
+                                        <li>file</li>
+                                        <li>hidden</li>
+                                        <li>submit</li>
+                                        <li>image</li>
+                                        <li>reset</li>
+                                        <li>button</li>
+                                        <li>range</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <div class="alert alert-warning">
+                                ※主に「keyup」時に入力状態を確認してイベントを発火していますが、
+                                「keyup」時に以下のキーコードを受け取ったときはイベントは発火しません。
+                                <br>
+                                ただし、「windows7 64bit」のchromeでは「半角・全角（244）」を押すと
+                                「エンターキー（13）」が同時に発行されるため、イベントが発火されることを確認しています。
+                                <ul>
+                                    <li>9, // TAB</li>
+                                    <li>15, // Command</li>
+                                    <li>16, // Shift</li>
+                                    <li>17, // Ctrl</li>
+                                    <li>18, // Alt</li>
+                                    <li>19, // Pause Break</li>
+                                    <li>20, // Shift+Caps Lock</li>
+                                    <li>27, // Esc</li>
+                                    <li>28, // 「前候補・変換」</li>
+                                    <li>29, // 「無変換」</li>
+                                    <li>33, // Page Up</li>
+                                    <li>34, // Page Down</li>
+                                    <li>35, // End</li>
+                                    <li>36, // Home</li>
+                                    <li>37, 38, 39, 40, // 矢印</li>
+                                    <li>45, // Ins</li>
+                                    <li>91, // 左Windowsキー</li>
+                                    <li>92, // 右Windowsキー</li>
+                                    <li>93, // 右クリックキー</li>
+                                    <li>112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, // ファンクションキー</li>
+                                    <li>144, // Num Lock</li>
+                                    <li>145, // Scroll Lock</li>
+                                    <li>240, 241, // Caps Lock</li>
+                                    <li>242, // 「カタカナ・ひらがな」</li>
+                                    <li>243, 244  // 「半角・全角」</li>
+                                </ul>
+                            </div>
+                            <h2>確認済みのブラウザ</h2>
+                            <p>「windows7 64bit」で下記のブラウザを使用して確認しています</p>
+                            <ul>
+                                <li>Google Chrome</li>
+                                <li>Firefox Developer Edition</li>
+                                <li>Internet Explorer11</li>
+                            </ul>
+                            <div class="alert alert-danger">
+                                バグや改善項目がありましたら、GitHubのissueにあげてもらえると助かります。
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </article>
+            <article id="get-start">
+                <header>
+                    <h1>はじめ方</h1>
+                </header>
+                <section>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h1>プラグインの読み込み・適用</h1>
+                        </div>
+                        <div class="panel-body">
+                            <h2>プラグインの読み込み</h2>
+                            <pre>&lt;script src=&quot;js/jquery.imeenter.js&quot;&gt;&lt;/script&gt;</pre>
+                            <h2>エレメントへプラグインの適用</h2>
+                            <pre>$(&quot;.ime-enter&quot;).imeEnter();</pre>
+                            <h2>プラグインイベントの再適用</h2>
+                            <pre>$(&quot;.ime-enter&quot;).imeEnter(&quot;on&quot;);</pre>
+                            <h2>プラグインイベントの一時不使用</h2>
+                            <pre>$(&quot;.ime-enter&quot;).imeEnter(&quot;off&quot;);</pre>
+                            <h2>プラグイン適用の破棄</h2>
+                            <pre>$(&quot;.ime-enter&quot;).imeEnter(&quot;destroy&quot;);</pre>
+                            <h2>イベントの捕捉</h2>
+                            <pre>
+$(&quot;.ime-enter&quot;).on(&quot;enter.imeEnter&quot;, function () {
+    // ここに何かの処理
+});</pre>
+                        </div>
+                    </div>
+                </section>
+            </article>
+            <article id="demo">
+                <header>
+                    <h1>デモ</h1>
+                </header>
+                <section>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <pre>
+&lt;script type=&quot;text/javascript&quot;&gt;
+
+  $(function () {
+    &quot;use strict&quot;;
+    $(&quot;.ime-enter&quot;).imeEnter();
+
+    $(&quot;.ime-enter&quot;).on(&quot;enter.imeEnter&quot;, function () {
+      var inputStr = $(this).val();
+      var preStr = $(&quot;#pre&quot;).text();
+      // preにinputの内容を追記していきます
+      $(&quot;#pre&quot;).text(preStr !== &quot;&quot; ? preStr + &quot;\n&quot; + inputStr : inputStr);
+    });
+  });
+
+&lt;/script&gt;
+
+&lt;input type=&quot;text&quot; class=&quot;ime-enter&quot;&gt;
+&lt;pre id=&quot;pre&quot;&gt;&lt;/pre&gt;
+                            </pre>
+                            <div class="form-inline form-group">
+                                <input type="text" class="ime-enter form-control">
+                            </div>
+                            <p>上記の「input」に文字を入力するとイベント発火時に下記に「input」の内容が追記されます</p>
+                            <pre id="pre"></pre>
+                        </div>
+                    </div>
+                </section>
+            </article>
+        </div>
+    </body>
+</html>
