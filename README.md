@@ -14,7 +14,7 @@ jQuery.imeEnterはIME入力確定・カット・ペースト時にイベント�
 
 ## jQuery.imeEnterは次の時に「enter.imeEnter」というイベントが発火します
 
-- IMEがoffの時の「keyup」した時
+- IMEがoffの時に「keyup」した時
 - IMEの入力が確定した時
 - カットした時
 - ペーストした時

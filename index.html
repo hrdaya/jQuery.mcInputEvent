@@ -11,8 +11,12 @@
         <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 
-        <!-- UltraDateの読み込み -->
+        <!-- jQuery.imeEnterの読み込み -->
         <script src="src/jquery.imeenter.js"></script>
+
+        <!-- Bootstrap Switchの読み込み -->
+        <script src="demo/js/bootstrap-switch.min.js"></script>
+        <link rel="stylesheet" href="demo/css/bootstrap-switch.min.css">
 
         <!-- デモ用Javascript、cssの読み込み -->
         <script src="demo/js/demo.js"></script>
@@ -67,7 +71,7 @@
                             <h2>特徴</h2>
                             <p>jQuery.imeEnterは次の時に「enter.imeEnter」というイベントが発火します</p>
                             <ul>
-                                <li>IMEがoffの時の「keyup」した時</li>
+                                <li>IMEがoffの時に「keyup」した時</li>
                                 <li>IMEの入力が確定した時</li>
                                 <li>カットした時</li>
                                 <li>ペーストした時</li>
@@ -97,7 +101,9 @@
                                 「keyup」時に以下のキーコードを受け取ったときはイベントは発火しません。
                                 <br>
                                 ただし、「windows7 64bit」のchromeでは「半角・全角（244）」を押すと
-                                「エンターキー（13）」が同時に発行されるため、イベントが発火されることを確認しています。
+                                「keydown」→「keyup」の順にキーイベントが発火しないといけないところが
+                                「keyup」→「keydown」の順にキーイベントが発火してしまう事が原因で
+                                イベントが発火されることを確認しています。
                                 <ul>
                                     <li>9, // TAB</li>
                                     <li>15, // Command</li>
@@ -165,6 +171,11 @@
 $(&quot;.ime-enter&quot;).on(&quot;enter.imeEnter&quot;, function () {
     // ここに何かの処理
 });</pre>
+                            <p>on/offするならこちら</p>
+                            <pre>
+$(document).on(&quot;enter.imeEnter&quot;, &quot;.ime-enter&quot;, function () {
+    // ここに何かの処理
+});</pre>
                         </div>
                     </div>
                 </section>
@@ -198,6 +209,8 @@ $(&quot;.ime-enter&quot;).on(&quot;enter.imeEnter&quot;, function () {
                             </pre>
                             <div class="form-inline form-group">
                                 <input type="text" class="ime-enter form-control">
+                                <label>イベント</label>
+                                <input type="checkbox" id="boot-switch" checked>
                             </div>
                             <p>上記の「input」に文字を入力するとイベント発火時に下記に「input」の内容が追記されます</p>
                             <pre id="pre"></pre>
