@@ -132,8 +132,8 @@
                         }
                         break;
                     case 'keypress':
-                        // IME入力中はキープレスイベントが発行されないので
-                        // このイベントが発行された場合はIME入力中以外とみなす
+                        // IME入力中はキープレスイベントは発火しないので
+                        // このイベントが発火した場合はIME入力中以外とみなす
                         imeFlag = false;
                         break;
                     case 'keyup':
@@ -142,17 +142,11 @@
 
                         // 文字入力以外のキー入力は除外
                         if (exceptKeys.indexOf(keyCode) === -1) {
-                            // IME入力中フラグがセットされているときの処理
-                            if (imeFlag) {
-                                // キーコードが13の時はIME入力完了とみなす
-                                if (keyCode === evt.keyCode) {
-                                    // IME入力中フラグのリセット
-                                    imeFlag = false;
-                                    // イベントの発行
-                                    _this._trigger($elm);
-                                }
-                            } else {
-                                // IME入力中以外にイベントの発行
+                            // IME入力中でない
+                            // IME入力中でキーコード13が発行された
+                            if (!imeFlag ||
+                                    (imeFlag && keyCode === evt.keyCode)) {
+                                // イベントの発行
                                 _this._trigger($elm);
                             }
                         }
