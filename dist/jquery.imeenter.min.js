@@ -1,5 +1,5 @@
 /*!
- * jQuery.imeEnter v0.1.1 (http://hrdaya.github.io/jQuery.imeEnter/)
+ * jQuery.imeEnter v0.1.2 (http://hrdaya.github.io/jQuery.imeEnter/)
  *
  * Copyright 2015 yu-ki higa (https://github.com/hrdaya)
  * Licensed under MIT (https://github.com/hrdaya/jQuery.imeEnter/blob/master/LICENSE)

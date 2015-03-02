@@ -100,33 +100,54 @@
                                 ※主に「keyup」時に入力状態を確認してイベントを発火していますが、
                                 「keyup」時に以下のキーコードを受け取ったときはイベントは発火しません。
                                 <br>
-                                ただし、「windows7 64bit」のchromeでは「半角・全角（244）」を押すと
-                                「keydown」→「keyup」の順にキーイベントが発火しないといけないところが
-                                「keyup」→「keydown」の順にキーイベントが発火してしまう事が原因で
-                                イベントが発火されることを確認しています。
+                                <s>
+                                    ただし、「windows7 64bit」のchromeでは「半角・全角（244）」を押すと
+                                    「keydown」→「keyup」の順にキーイベントが発火しないといけないところが
+                                    「keyup」→「keydown」の順にキーイベントが発火してしまう事が原因で
+                                    イベントが発火されることを確認しています。
+                                </s>
+                                <br>
+                                対策を施しました。
                                 <ul>
+                                    <li>3, // Cancel</li>
+                                    <li>6, // Help</li>
                                     <li>9, // TAB</li>
                                     <li>15, // Command</li>
                                     <li>16, // Shift</li>
                                     <li>17, // Ctrl</li>
                                     <li>18, // Alt</li>
                                     <li>19, // Pause Break</li>
-                                    <li>20, // Shift+Caps Lock</li>
+                                    <li>20, // Caps Lock</li>
+                                    <li>21, // KANA</li>
+                                    <li>22, // Mac"英数" キー</li>
+                                    <li>23, // JUNJA</li>
+                                    <li>24, // FINAL</li>
+                                    <li>25, // KANJI</li>
                                     <li>27, // Esc</li>
                                     <li>28, // 「前候補・変換」</li>
                                     <li>29, // 「無変換」</li>
+                                    <li>30, // ACCEPT</li>
+                                    <li>31, // MODECHANGE</li>
                                     <li>33, // Page Up</li>
                                     <li>34, // Page Down</li>
                                     <li>35, // End</li>
                                     <li>36, // Home</li>
                                     <li>37, 38, 39, 40, // 矢印</li>
+                                    <li>41, // SELECT</li>
+                                    <li>42, // PRINT</li>
+                                    <li>43, // EXECUTE</li>
+                                    <li>44, // Print Screen</li>
                                     <li>45, // Ins</li>
                                     <li>91, // 左Windowsキー</li>
                                     <li>92, // 右Windowsキー</li>
                                     <li>93, // 右クリックキー</li>
+                                    <li>95, // SLEEP</li>
                                     <li>112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, // ファンクションキー</li>
+                                    <li>124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, // ファンクションキー</li>
                                     <li>144, // Num Lock</li>
                                     <li>145, // Scroll Lock</li>
+                                    <li>224, // Command</li>
+                                    <li>225, // AltGr</li>
                                     <li>240, 241, // Caps Lock</li>
                                     <li>242, // 「カタカナ・ひらがな」</li>
                                     <li>243, 244  // 「半角・全角」</li>
