@@ -1,5 +1,5 @@
 # jQuery.imeEnter
-[![GitHub release](https://img.shields.io/badge/release-v0.1.0-blue.svg?style=flat)](https://github.com/hrdaya/jQuery.imeEnter/releases)
+[![GitHub release](https://img.shields.io/badge/release-v0.1.1-blue.svg?style=flat)](https://github.com/hrdaya/jQuery.imeEnter/releases)
 [![GitHub licence](https://img.shields.io/badge/licence-MIT-blue.svg?style=flat)](https://github.com/hrdaya/jQuery.imeEnter/blob/master/LICENSE)
 [![devDependency Status](https://david-dm.org/hrdaya/jQuery.imeEnter/dev-status.svg)](https://david-dm.org/hrdaya/jQuery.imeEnter#info=devDependencies)
 
