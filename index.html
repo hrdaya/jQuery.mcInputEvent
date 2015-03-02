@@ -194,7 +194,7 @@ $(document).on(&quot;enter.imeEnter&quot;, &quot;.ime-enter&quot;, function () {
     &quot;use strict&quot;;
     $(&quot;.ime-enter&quot;).imeEnter();
 
-    $(&quot;.ime-enter&quot;).on(&quot;enter.imeEnter&quot;, function () {
+    $(document).on(&quot;enter.imeEnter&quot;, &quot;.ime-enter&quot;, function () {
       var inputStr = $(this).val();
       var preStr = $(&quot;#pre&quot;).text();
       // preにinputの内容を追記していきます
@@ -209,7 +209,6 @@ $(document).on(&quot;enter.imeEnter&quot;, &quot;.ime-enter&quot;, function () {
                             </pre>
                             <div class="form-inline form-group">
                                 <input type="text" class="ime-enter form-control">
-                                <label>イベント</label>
                                 <input type="checkbox" id="boot-switch" checked>
                             </div>
                             <p>上記の「input」に文字を入力するとイベント発火時に下記に「input」の内容が追記されます</p>

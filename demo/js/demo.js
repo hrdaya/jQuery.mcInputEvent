@@ -5,6 +5,7 @@ $(function () {
     var $switch = $('#boot-switch');
     $elm.imeEnter();
     $switch.bootstrapSwitch({
+        labelText: 'イベント',
         offColor: 'danger',
         onSwitchChange: function (event, state) {
             state ? $elm.imeEnter('on') : $elm.imeEnter('off');
