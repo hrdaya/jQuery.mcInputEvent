@@ -141,7 +141,12 @@
                         keyUpFlag = true;
 
                         // 文字入力以外のキー入力は除外
-                        if (exceptKeys.indexOf(keyCode) === -1) {
+                        // ((event.ctrlKey || event.metaKey) && keyCode === 86)はctrl+v
+                        // ((event.ctrlKey || event.metaKey) && keyCode === 88)はctrl+x
+                        if (exceptKeys.indexOf(keyCode) === -1 &&
+                                !((event.ctrlKey || event.metaKey) && keyCode === 86) &&
+                                !((event.ctrlKey || event.metaKey) && keyCode === 88)) {
+
                             // IME入力中でない
                             // IME入力中でキーコード13が発行された
                             if (!imeFlag ||
