@@ -8,7 +8,7 @@ module.exports = function (grunt) {
             dist: "dist",
             txt: "txt",
             demo: "demo",
-            filename: "jquery.imeenter"
+            filename: "jquery.mcInputEvent"
         },
         clean: {
             dist: {

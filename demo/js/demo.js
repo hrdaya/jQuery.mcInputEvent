@@ -1,6 +1,6 @@
 $(function () {
     'use strict';
-    var $elm = $('.ime-enter').first();
+    var $elm = $('.mcinput').first();
     var $pre = $('#pre');
     var $switch = $('#boot-switch');
     $elm.imeEnter();
@@ -12,7 +12,7 @@ $(function () {
         }
     });
 
-    $(document).on('enter.imeEnter', '.ime-enter', function () {
+    $(document).on('mcinput', '.mcinput', function () {
         var inputStr = $(this).val();
         var preStr = $pre.text();
         $pre.text(preStr !== '' ? preStr + '\n' + inputStr : inputStr);
