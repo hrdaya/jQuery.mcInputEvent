@@ -1,9 +1,9 @@
 {
-    "name": "jQuery.imeEnter",
-    "description": "jQuery.imeEnter",
-    "version": "0.1.2",
+    "name": "jQuery.mcInputEvent",
+    "description": "jQuery.mcInputEvent",
+    "version": "0.2.0",
     "main": [
-        "dist/jquery.imeenter.js"
+        "dist/jquery.mcInputEvent.js"
     ],
     "license": "MIT",
     "ignore": [
@@ -26,9 +26,12 @@
     "authors": [
         "yu-ki higa (https://github.com/hrdaya)"
     ],
-    "homepage": "http://hrdaya.github.io/jQuery.imeEnter/",
+    "homepage": "http://hrdaya.github.io/jQuery.mcInputEvent/",
     "repository": {
         "type": "git",
-        "url": "git://github.com/hrdaya/jQuery.imeEnter.git"
+        "url": "git://github.com/hrdaya/jQuery.mcInputEvent.git"
+    },
+    "dependencies": {
+        "jquery.ex-code-prettify": "cyokodog/jquery.ex-code-prettify#gh-pages"
     }
 }
