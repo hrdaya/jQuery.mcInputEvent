@@ -92,6 +92,22 @@ module.exports = function (grunt) {
                 loopfunc: true
             }
         },
+        copy: {
+            js: {
+                expand: true,
+                cwd: 'bower_components/bootstrap-switch/dist/js/',
+                src: [
+                    'bootstrap-switch.min.js'
+                ],
+                dest: '<%= meta.demo %>/js/'
+            },
+            css: {
+                expand: true,
+                cwd: 'bower_components/bootstrap-switch/dist/css/',
+                src: ['bootstrap-switch.min.css'],
+                dest: '<%= meta.demo %>/css/'
+            }
+        },
         watch: {
             js: {
                 spawn: false,
@@ -104,6 +120,7 @@ module.exports = function (grunt) {
                 ],
                 tasks: [
                     'clean',
+                    'copy',
                     'replace',
                     'uglify',
                     'jshint'
@@ -113,9 +130,10 @@ module.exports = function (grunt) {
     });
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-text-replace');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.registerTask('default', ['watch']);
-    grunt.registerTask('build', ['clean', 'replace', 'uglify']);
+    grunt.registerTask('build', ['clean', 'copy', 'replace', 'uglify']);
 };
