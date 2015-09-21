@@ -3,7 +3,7 @@
 [![GitHub licence](https://img.shields.io/badge/licence-MIT-blue.svg?style=flat)](https://github.com/hrdaya/jQuery.mcInputEvent/blob/master/LICENSE)
 [![devDependency Status](https://david-dm.org/hrdaya/jQuery.mcInputEvent/dev-status.svg)](https://david-dm.org/hrdaya/jQuery.mcInputEvent#info=devDependencies)
 
-jQuery.mcInputEventは入力可能なエリアでinputイベントでIME入力中にはイベントを受け取りたくないという時に使用するプラグインです。
+jQuery.mcInputEventはIME入力中にinputイベントを発火させたくない時に使用するプラグインです。
 
 ## 特徴
 
