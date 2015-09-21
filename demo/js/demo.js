@@ -1,14 +1,14 @@
 $(function () {
     'use strict';
-    var $elm = $('.mcinput').first();
+    var $elm = $('.mcinput');
     var $pre = $('#pre');
     var $switch = $('#boot-switch');
-    $elm.imeEnter();
+    $elm.mcInputEvent();
     $switch.bootstrapSwitch({
         labelText: 'イベント',
         offColor: 'danger',
         onSwitchChange: function (event, state) {
-            state ? $elm.imeEnter('on') : $elm.imeEnter('off');
+            state ? $elm.mcInputEvent('on') : $elm.mcInputEvent('off');
         }
     });
 
