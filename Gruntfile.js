@@ -106,6 +106,21 @@ module.exports = function (grunt) {
                 cwd: 'bower_components/bootstrap-switch/dist/css/',
                 src: ['bootstrap-switch.min.css'],
                 dest: '<%= meta.demo %>/css/'
+            },
+            js_ex_code_prettify: {
+                expand: true,
+                cwd: 'bower_components/jquery.ex-code-prettify/',
+                src: [
+                    'jquery.ex-code-prettify.js',
+                    'google-code-prettify/*'
+                ],
+                dest: '<%= meta.demo %>/js/'
+            },
+            css_ex_code_prettify: {
+                expand: true,
+                cwd: 'bower_components/jquery.ex-code-prettify/',
+                src: ['jquery.ex-code-prettify.css'],
+                dest: '<%= meta.demo %>/css/'
             }
         },
         watch: {
