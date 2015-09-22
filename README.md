@@ -1,5 +1,5 @@
 # jQuery.mcInputEvent
-[![GitHub release](https://img.shields.io/badge/release-v0.2.0-blue.svg?style=flat)](https://github.com/hrdaya/jQuery.mcInputEvent/releases)
+[![GitHub release](https://img.shields.io/badge/release-v0.2.1-blue.svg?style=flat)](https://github.com/hrdaya/jQuery.mcInputEvent/releases)
 [![GitHub licence](https://img.shields.io/badge/licence-MIT-blue.svg?style=flat)](https://github.com/hrdaya/jQuery.mcInputEvent/blob/master/LICENSE)
 [![devDependency Status](https://david-dm.org/hrdaya/jQuery.mcInputEvent/dev-status.svg)](https://david-dm.org/hrdaya/jQuery.mcInputEvent#info=devDependencies)
 
