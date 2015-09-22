@@ -32,6 +32,7 @@
         "url": "git://github.com/hrdaya/jQuery.mcInputEvent.git"
     },
     "dependencies": {
-        "jquery.ex-code-prettify": "cyokodog/jquery.ex-code-prettify#gh-pages"
+        "jquery.ex-code-prettify": "cyokodog/jquery.ex-code-prettify#gh-pages",
+        "bootstrap-switch": "nostalgiaz/bootstrap-switch"
     }
 }
