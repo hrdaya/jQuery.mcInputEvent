@@ -96,8 +96,8 @@
                         _this.removeFocusEvents();
                         break;
                     case 'keyup':
-                        // IME入力時以外で入力前の値と異なる場合
-                        if (!_this.isComposition && !_this.isSameVal()) {
+                        // IME入力時以外
+                        if (!_this.isComposition) {
                             // プラグインイベントを発火
                             _this.fireEvent();
                         }
@@ -131,10 +131,12 @@
         },
         // イベントの発行
         fireEvent: function () {
-            // 最終入力値をセットする
-            this.setLastVal();
-            // イベントオブジェクトと共にプラグインイベントを発火する
-            this.$elm.trigger($.Event(eventName, this.obj));
+            if (!this.isSameVal()) {
+                // 最終入力値をセットする
+                this.setLastVal();
+                // イベントオブジェクトと共にプラグインイベントを発火する
+                this.$elm.trigger($.Event(eventName, this.obj));
+            }
         },
         // 入力前の値と現在の値が同じか確認する
         isSameVal: function () {

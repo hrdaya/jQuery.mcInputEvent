@@ -1,0 +1,27 @@
+/*
+ * datepicker
+ */
+.datepicker table tr {
+    // saturday
+    td.saturday {
+        color: blue
+    }
+    td.old.saturday,
+    td.new.saturday,
+    td.disabled.saturday {
+        color: skyblue
+    }
+    // sunday, holiday
+    td.sunday,
+    td.holiday {
+        color: red
+    }
+    td.old.sunday,
+    td.old.holiday,
+    td.new.sunday,
+    td.new.holiday,
+    td.disabled.sunday,
+    td.disabled.holiday {
+        color: pink
+    }
+}

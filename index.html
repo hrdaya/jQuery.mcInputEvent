@@ -9,7 +9,7 @@
 
     <!-- jQuery、Bootstrapの読み込み -->
     <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
     <!-- jQuery.mcInputEventの読み込み -->
     <script src="src/jquery.mcInputEvent.js"></script>
@@ -17,6 +17,11 @@
     <!-- Bootstrap Switchの読み込み -->
     <script src="demo/js/bootstrap-switch.min.js"></script>
     <link rel="stylesheet" href="demo/css/bootstrap-switch.min.css">
+
+    <!-- jquery.ex-code-prettifyの読み込み -->
+    <script src="demo/js/google-code-prettify/prettify.js"></script>
+    <script src="demo/js/jquery.ex-code-prettify.js"></script>
+    <link rel="stylesheet" href="demo/css/jquery.ex-code-prettify.css">
 
     <!-- デモ用Javascript、cssの読み込み -->
     <script src="demo/js/demo.js"></script>
@@ -102,24 +107,29 @@
               <h2>プラグインの読み込み</h2>
               <pre>&lt;script src=&quot;path/to/jquery.mcInputEvent.js&quot;&gt;&lt;/script&gt;</pre>
               <h2>エレメントへプラグインの適用</h2>
-              <pre>$(&quot;.mcinput&quot;).mcInputEvent();</pre>
+              <pre>$(element).mcInputEvent();</pre>
               <h2>プラグインイベントの再適用</h2>
-              <pre>$(&quot;.mcinput&quot;).mcInputEvent(&quot;on&quot;);</pre>
+              <pre>$(element).mcInputEvent(&quot;on&quot;);</pre>
               <h2>プラグインイベントの一時不使用</h2>
-              <pre>$(&quot;.mcinput&quot;).mcInputEvent(&quot;off&quot;);</pre>
+              <pre>$(element).mcInputEvent(&quot;off&quot;);</pre>
               <h2>プラグイン適用の破棄</h2>
-              <pre>$(&quot;.mcinput&quot;).mcInputEvent(&quot;destroy&quot;);</pre>
+              <pre>$(element).mcInputEvent(&quot;destroy&quot;);</pre>
               <h2>プラグインイベントの強制発火</h2>
-              <pre>$(&quot;.mcinput&quot;).mcInputEvent(&quot;fireEvent&quot;);</pre>
+              <pre>$(element).mcInputEvent(&quot;fireEvent&quot;);</pre>
               <h2>イベントの捕捉</h2>
               <pre>
-$(&quot;.mcinput&quot;).on(&quot;mcinput&quot;, function () {
-    // ここに何かの処理
-});</pre>
-              <p>on/offするならこちら</p>
-              <pre>
-$(document).on(&quot;mcinput&quot;, &quot;.mcinput&quot;, function () {
-    // ここに何かの処理
+$(element).on(&quot;mcinput&quot;, function (event) {
+  // ここに何かの処理
+
+  // イベントを発火したエレメントのタイプを取得する
+  event.tagType
+    input → input, textarea
+    html  → input, textarea以外
+
+  // イベントを発火したエレメントの値を取得する
+  event.lastVal
+    input, textarea → $(this).val();の値と同じ
+    input, textarea以外 → $(this).html();の値と同じ
 });</pre>
             </div>
           </div>
@@ -131,34 +141,139 @@ $(document).on(&quot;mcinput&quot;, &quot;.mcinput&quot;, function () {
         </header>
         <section>
           <div class="panel panel-default">
+            <div class="panel-heading">
+              <h1>&lt;input type=&quot;text&quot;&gt;のデモ</h1>
+            </div>
             <div class="panel-body">
-              <pre>
-&lt;script type=&quot;text/javascript&quot;&gt;
-
-  $(function () {
-    &quot;use strict&quot;;
-    $(&quot;.mcinput&quot;).mcInputEvent();
-
-    $(document).on(&quot;mcinput&quot;, &quot;.mcinput&quot;, function () {
-      var inputStr = $(this).val();
-      var preStr = $(&quot;#pre&quot;).text();
-      // preにinputの内容を追記していきます
-      $(&quot;#pre&quot;).text(preStr !== &quot;&quot; ? preStr + &quot;\n&quot; + inputStr : inputStr);
-    });
-  });
-
-&lt;/script&gt;
-
-&lt;input type=&quot;text&quot; class=&quot;mcinput&quot;&gt;
-&lt;pre id=&quot;pre&quot;&gt;&lt;/pre&gt;
-              </pre>
-              <div class="form-inline form-group">
-                <input type="text" class="mcinput form-control">
-                <input type="checkbox" id="boot-switch" checked>
+              <div class="ex-code-prettify demo-right">
+                <textarea class="code" data-ex-code-prettify-param="{codeType:'html'}">
+<div class="form-group">
+  <input type="text" id="mcinput-input" class="mcinput form-control">
+  <input type="checkbox" id="boot-switch-input" class="boot-switch" checked>
+</div>
+<p>上記のフォームに文字を入力するとイベント発火時に下記にイベント名が追記されます</p>
+<pre id="pre-input" class="pre"></pre>
+<button id="btn-clear-input" class="btn btn-default" type="button">クリア</button>
+                </textarea>
+                <textarea class="code" data-ex-code-prettify-param="{codeType:'script'}">
+// mcInputEventの適用
+$('#mcinput-input').mcInputEvent();
+// イベント発生時の処理
+$('#mcinput-input').on('mcinput', function (e) {
+  // preエリアにテキストを追記
+  var preStr = $('#pre-input').text();
+  $('#pre-input').text(
+    preStr !== '' ? preStr + '\n' + e.type : e.type
+  );
+});
+// オン・オフスイッチの設定
+$('#boot-switch-input').bootstrapSwitch({
+  labelText: 'イベント',
+  offColor: 'danger',
+  onSwitchChange: function (event, state) {
+      state ? $('#mcinput-input').mcInputEvent('on') :
+              $('#mcinput-input').mcInputEvent('off');
+  }
+});
+// クリアボタン
+$('#btn-clear-input').on('click', function () {
+  $('#pre-input').text('');
+  $('#mcinput-input').val('');
+});
+                </textarea>
               </div>
-              <p>上記の「input」に文字を入力するとイベント発火時に下記に「input」の内容が追記されます</p>
-              <pre id="pre"></pre>
-              <button id="btn-clear" class="btn btn-default" type="button">クリア</button>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h1>&lt;textarea&gt;&lt;/textarea&gt;のデモ</h1>
+            </div>
+            <div class="panel-body">
+              <div class="ex-code-prettify demo-right">
+                <textarea class="code" data-ex-code-prettify-param="{codeType:'html'}">
+<div class="form-group">
+  &lt;textarea id="mcinput-textarea" class="mcinput form-control"&gt;&lt;/textarea&gt;
+  <input type="checkbox" id="boot-switch-textarea" class="boot-switch" checked>
+</div>
+<p>上記のフォームに文字を入力するとイベント発火時に下記にイベント名が追記されます</p>
+<pre id="pre-textarea" class="pre"></pre>
+<button id="btn-clear-textarea" class="btn btn-default" type="button">クリア</button>
+                </textarea>
+                <textarea class="code" data-ex-code-prettify-param="{codeType:'script'}">
+// mcInputEventの適用
+$('#mcinput-textarea').mcInputEvent();
+// イベント発生時の処理
+$('#mcinput-textarea').on('mcinput', function (e) {
+  // preエリアにテキストを追記
+  var preStr = $('#pre-textarea').text();
+  $('#pre-textarea').text(
+    preStr !== '' ? preStr + '\n' + e.type : e.type
+  );
+});
+// オン・オフスイッチの設定
+$('#boot-switch-textarea').bootstrapSwitch({
+  labelText: 'イベント',
+  offColor: 'danger',
+  onSwitchChange: function (event, state) {
+      state ? $('#mcinput-textarea').mcInputEvent('on') :
+              $('#mcinput-textarea').mcInputEvent('off');
+  }
+});
+// クリアボタン
+$('#btn-clear-textarea').on('click', function () {
+  $('#pre-textarea').text('');
+  $('#mcinput-textarea').val('');
+});
+                </textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h1>&lt;div contenteditable=&quot;true&quot;&gt;&lt;/div&gt;のデモ</h1>
+            </div>
+            <div class="panel-body">
+              <div class="ex-code-prettify demo-right">
+                <textarea class="code" data-ex-code-prettify-param="{codeType:'html'}">
+<div class="form-group">
+  <div id="mcinput-div" class="mcinput" contenteditable="true"></div>
+  <input type="checkbox" id="boot-switch-div" class="boot-switch" checked>
+</div>
+<p>上記のフォームに文字を入力するとイベント発火時に下記にイベント名が追記されます</p>
+<pre id="pre-div" class="pre"></pre>
+<button id="btn-clear-div" class="btn btn-default" type="button">クリア</button>
+                </textarea>
+                <textarea class="code" data-ex-code-prettify-param="{codeType:'script'}">
+// mcInputEventの適用
+$('#mcinput-div').mcInputEvent();
+// イベント発生時の処理
+$('#mcinput-div').on('mcinput', function (e) {
+  // preエリアにテキストを追記
+  var preStr = $('#pre-div').text();
+  $('#pre-div').text(
+    preStr !== '' ? preStr + '\n' + e.type : e.type
+  );
+});
+// オン・オフスイッチの設定
+$('#boot-switch-div').bootstrapSwitch({
+  labelText: 'イベント',
+  offColor: 'danger',
+  onSwitchChange: function (event, state) {
+      state ? $('#mcinput-div').mcInputEvent('on') :
+              $('#mcinput-div').mcInputEvent('off');
+  }
+});
+// クリアボタン
+$('#btn-clear-div').on('click', function () {
+  $('#pre-div').text('');
+  $('#mcinput-div').html('');
+});
+                </textarea>
+              </div>
             </div>
           </div>
         </section>
