@@ -72,13 +72,26 @@
             </div>
             <div class="panel-body">
               <h2>特徴</h2>
-              <p></p>
               <ul>
-                <li>「input」の代わりに「mcinput」というイベントが発火します。</li>
-                <li>IME入力中にイベントは発火しません。</li>
-                <li>IEでは contenteditable=&quot;true&quot; を設定したエレメントではinputイベントが発火しませんが、mcinputは発火します。</li>
-                <li>IE9ではバックスペースで文字を削除した時等にinputイベントが発火しないバグがありますが、mcinputでは発火します。</li>
+                <li>Internet Explorer系においてのinputイベントをChromeや、Firefoxと同じようなタイミングで発火するようにします。</li>
+                <li>IME入力中に発火しない独自イベント(mcinput)を備えます。</li>
+                <li>input、textareaからの発火か、contenteditable=&quot;true&quot; を設定したエレメントからの発火からを判定することができます。</li>
+                <li>input、textareaからの発火か、contenteditable=&quot;true&quot; を設定したエレメントからの発火からに関わらずエレメントの最終値を簡単に取得できます。</li>
               </ul>
+              <h2>IE系でinputイベントが発火しないタイミング(jQuery.mcInputEventで修正されるもの)</h2>
+              <h3>IE9</h3>
+              <ol>
+                <li>BackSpace、Deleteキーでの文字の削除</li>
+                <li>「切り取り」「Ctrl+x」</li>
+                <li>「元に戻す」「Ctrl+z」</li>
+                <li>選択した範囲を別のエレメントにドロップして内容が変わったとき</li>
+              </ol>
+              <h3>IE全般</h3>
+              <ol>
+                <li>contenteditable=&quot;true&quot;を設定したエレメント</li>
+                <li>ESCキーで入力文字列が取り消されたとき</li>
+                <li>IME入力終了時</li>
+              </ol>
               <h2>確認済みのブラウザ</h2>
               <p>「windows7 64bit」で下記のブラウザを使用して確認しています</p>
               <ul>
@@ -115,9 +128,10 @@
               <h2>プラグイン適用の破棄</h2>
               <pre>$(element).mcInputEvent(&quot;destroy&quot;);</pre>
               <h2>プラグインイベントの強制発火</h2>
-              <pre>$(element).mcInputEvent(&quot;fireEvent&quot;);</pre>
-              <h2>イベントの捕捉</h2>
+              <pre>$(element).mcInputEvent(&quot;triggerEvent&quot;);</pre>
+              <h2>イベントの取得</h2>
               <pre>
+// IME入力中以外でエレメントの値が変わった時のイベントを取得
 $(element).on(&quot;mcinput&quot;, function (event) {
   // ここに何かの処理
 
@@ -130,6 +144,28 @@ $(element).on(&quot;mcinput&quot;, function (event) {
   event.lastVal
     input, textarea → $(this).val();の値と同じ
     input, textarea以外 → $(this).html();の値と同じ
+});</pre>
+              <pre>
+// inputイベントの代わりのイベントを取得
+$(element).on(&quot;input2&quot;, function (event) {
+  // ここに何かの処理
+
+  // イベントを発火したエレメントのタイプを取得する
+  event.tagType
+    input → input, textarea
+    html  → input, textarea以外
+
+  // イベントを発火したエレメントの値を取得する
+  event.lastVal
+    input, textarea → $(this).val();の値と同じ
+    input, textarea以外 → $(this).html();の値と同じ
+});</pre>
+              <pre>
+// inputイベントを取得
+// イベントを発火したエレメントのタイプやエレメントの値を取得することは出来ない
+$(element).on(&quot;input&quot;, function () {
+  // ここに何かの処理
+
 });</pre>
             </div>
           </div>
@@ -159,7 +195,7 @@ $(element).on(&quot;mcinput&quot;, function (event) {
 // mcInputEventの適用
 $('#mcinput-input').mcInputEvent();
 // イベント発生時の処理
-$('#mcinput-input').on('mcinput', function (e) {
+$('#mcinput-input').on('input input2 mcinput', function (e) {
   // preエリアにテキストを追記
   var preStr = $('#pre-input').text();
   $('#pre-input').text(
@@ -205,7 +241,7 @@ $('#btn-clear-input').on('click', function () {
 // mcInputEventの適用
 $('#mcinput-textarea').mcInputEvent();
 // イベント発生時の処理
-$('#mcinput-textarea').on('mcinput', function (e) {
+$('#mcinput-textarea').on('input input2 mcinput', function (e) {
   // preエリアにテキストを追記
   var preStr = $('#pre-textarea').text();
   $('#pre-textarea').text(
@@ -251,7 +287,7 @@ $('#btn-clear-textarea').on('click', function () {
 // mcInputEventの適用
 $('#mcinput-div').mcInputEvent();
 // イベント発生時の処理
-$('#mcinput-div').on('mcinput', function (e) {
+$('#mcinput-div').on('input input2 mcinput', function (e) {
   // preエリアにテキストを追記
   var preStr = $('#pre-div').text();
   $('#pre-div').text(

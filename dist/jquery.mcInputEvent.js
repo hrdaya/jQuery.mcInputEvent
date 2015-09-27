@@ -1,5 +1,5 @@
 /*!
- * jQuery.mcInputEvent v0.2.1 (http://hrdaya.github.io/jQuery.mcInputEvent/)
+ * jQuery.mcInputEvent v0.3.0 (http://hrdaya.github.io/jQuery.mcInputEvent/)
  *
  * Copyright 2015 yu-ki higa (https://github.com/hrdaya)
  * Licensed under MIT (https://github.com/hrdaya/jQuery.mcInputEvent/blob/master/LICENSE)
@@ -18,52 +18,61 @@
     }
 }(function ($) {
     'use strict';
-
     // プラグイン名
     var pluginName = 'mcInputEvent';
-
-    // イベント名
-    var eventName = 'mcinput';
-
-    // フォーカス時にonにするイベント
-    var focusEvents = [
-        'blur.' + pluginName,
-        'keyup.' + pluginName,
-        'compositionstart.' + pluginName,
-        'compositionend.' + pluginName
-    ];
+    // IME入力中以外のイベント名
+    var notImeEvent = 'mcinput';
+    // inputに変わるイベント名
+    var inputEvent = 'input2';
+    // Microsoftのブラウザかどうか
+    var isMsBrowser = false;
+    // IE9かどうか
+    var isIE9 = false;
+    // ブラウザ判定
+    // EdgeをMicrosoft系のブラウザとして入れているが、
+    // WebKitと動作が異なる部分は修正すべきバグと
+    // http://blogs.windows.com/msedgedev/2015/06/17/building-a-more-interoperable-web-with-microsoft-edge/
+    // でも述べている為、将来的には削除する必要があるかも
+    var ua = window.navigator.userAgent.toLowerCase();
+    if (ua.indexOf('msie') > -1 ||
+            ua.indexOf('trident') > -1 ||
+            ua.indexOf('edge') > -1) {
+        isMsBrowser = true;
+        if (ua.indexOf('msie 9.0') > -1) {
+            isIE9 = true;
+        }
+    }
 
     // プラグイン本体
     var Plugin = function (elm) {
         this.$elm = $(elm);
         // IME入力中かどうか
         this.isComposition = false;
+        // タイマー用
+        this.timer;
         // イベント発火時にFunctionに渡す値
         // contenteditableに対応する為にタグのタイプをとりあえずhtmlにする
         this.obj = {
             lastVal: '',
             tagType: 'html'
         };
-        // input、textareaの時はタグのタイプをinputに変更
-        var tagName = this.$elm.prop('tagName').toLowerCase();
-        if (tagName === 'input' || tagName === 'textarea') {
-            this.obj.tagType = 'input';
-        }
-        // 現在の値を最終値としてセット
-        this.setLastVal();
+        // イベントの種類
+        this.checkEvents = [
+            'input.' + pluginName,
+            'compositionstart.' + pluginName,
+            'compositionend.' + pluginName
+        ];
+        // 初期化処理
+        this.init();
     };
-
     // プラグインのプロトタイプ
     Plugin.prototype = {
         // プラグインのイベント有効化
         on: function () {
-            var _this = this;
             // イベントの重複登録を避けるため一旦off
-            _this.off();
-            // フォーカスを受け取った時に値変更検知のイベントを有効にする
-            _this.$elm.on('focus.' + pluginName, function () {
-                _this.setFocusEvents();
-            });
+            this.off();
+            // inputとIME入力判定用のイベントを有効にする
+            this.$elm.on(this.checkEvents.join(' '), this.setEvents.bind(this));
         },
         // プラグインのイベント無効化
         off: function () {
@@ -78,65 +87,107 @@
             // エレメントからプラグイン用のデータを削除
             this.$elm.removeData(pluginName);
         },
-        // フォーカスを受け取った時に値変更検知のイベントを有効にする
-        setFocusEvents: function () {
-            var _this = this;
-            // コンテキストメニュー等からの値の変更を検知するために
-            // documentのselectionchangeイベントを有効にする
-            $(document).on('selectionchange.' + pluginName, function () {
-                // 擬似的にkeyupイベントを発火する
-                _this.$elm.trigger('keyup');
-            });
-            // keyupとIME入力判定用のイベントを有効にする
-            _this.$elm.on(focusEvents.join(' '), function (e) {
-                // イベントのタイプごとに処理
-                switch (e.type) {
-                    case 'blur':
-                        // フォーカスが外れた時に値変更検知の為のイベントを無効にする
-                        _this.removeFocusEvents();
-                        break;
-                    case 'keyup':
-                        // IME入力時以外
-                        if (!_this.isComposition) {
-                            // プラグインイベントを発火
-                            _this.fireEvent();
-                        }
-                        break;
-                    case 'compositionstart':
-                        // IME入力中フラグのセット
-                        _this.isComposition = true;
-                        break;
-                    case 'compositionend':
-                        // IME入力中フラグのリセット
-                        _this.isComposition = false;
-                        // IME入力入力終了時に擬似的にkeyupイベントを発火する
-                        _this.$elm.trigger('keyup');
-                        break;
+        // イベントの強制発火
+        triggerEvent: function () {
+            // inputを発火させることでinput2,mcinputも発火させる
+            // 合わせてエレメント内の最終値を更新させる
+            this.$elm.trigger('input');
+        },
+        // 初期化処理
+        init: function () {
+            // input、textareaの時はタグのタイプをinputに変更
+            var tagName = this.$elm.prop('tagName').toLowerCase();
+            if (tagName === 'input' || tagName === 'textarea') {
+                this.obj.tagType = 'input';
+                // IE9のバグ対策の為、selectionchangeをベースに入力の変更を監視する
+                if (isIE9) {
+                    this.checkEvents.push('focus.' + pluginName);
+                    this.checkEvents.push('blur.' + pluginName);
                 }
-            });
-            // 値のドロップに対する対策の為、擬似的にkeyupイベントを発火する
-            _this.$elm.trigger('keyup');
+            } else {
+                // input、textarea以外の時にMicrosoft系ブラウザの場合はinputイベントが発火しない為
+                // selectionchangeをベースに入力の変更を監視する
+                if (isMsBrowser) {
+                    this.checkEvents.push('focus.' + pluginName);
+                    this.checkEvents.push('blur.' + pluginName);
+                }
+            }
+            // keyup → ESCでの文字削除対策、input、textarea以外での入力対策
+            // drop → 値がドロップされた時の対策
+            if (isMsBrowser) {
+                this.checkEvents.push('keyup.' + pluginName);
+                this.checkEvents.push('drop.' + pluginName);
+            }
+            // 現在の値を最終値としてセット
+            this.setLastVal();
         },
-        // フォーカスが外れた時に値変更検知の為のイベントを無効にする
-        removeFocusEvents: function () {
-            $(document).off('selectionchange.' + pluginName);
-            this.$elm.off(focusEvents.join(' '));
-            // 選択範囲を別のエレメントに移動する時の対策
-            if (this.obj.tagType === 'html') {
-                var _this = this;
-                setTimeout(function () {
-                    _this.fireEvent();
-                }, 100);
+        // onにした時に各イベントをセットする
+        setEvents: function (e) {
+            // イベントのタイプごとに処理
+            switch (e.type) {
+                case 'input':
+                    // 最終入力値をセットする
+                    this.setLastVal();
+                    // inputの代わりのイベントを発火
+                    this.triggerInput2();
+                    // IME入力時以外にプラグインイベントを発火
+                    if (!this.isComposition) {
+                        this.triggerMcInput();
+                    }
+                    break;
+                case 'compositionstart':
+                    // IME入力中フラグのセット
+                    this.isComposition = true;
+                    break;
+                case 'compositionend':
+                    // IME入力中フラグのリセット
+                    this.isComposition = false;
+                    // MS系ブラウザでIME入力後にイベントが発火しない事への対策
+                    // 他ブラウザと合わせるために値が同じでも発火させる
+                    if (isMsBrowser) {
+                        this.triggerEvent();
+                    }
+                    break;
+                case 'focus':
+                    // フォーカスを受けた時にselectionchangeイベントを有効にする
+                    $(document).on('selectionchange.' + pluginName, this.triggerInput.bind(this));
+                    break;
+                case 'blur':
+                    // フォーカスが外れた時にselectionchangeイベントを無効にする
+                    $(document).off('selectionchange.' + pluginName);
+                    // 選択範囲を別のエレメントに移動する時の対策
+                    this.setDelayInputEvent();
+                    break;
+                case 'keyup':
+                    // 擬似的にinputイベントを発火する
+                    this.triggerInput();
+                    break;
+                case 'drop':
+                    // 擬似的にinputイベントを発火する
+                    this.setDelayInputEvent();
+                    break;
             }
         },
-        // イベントの発行
-        fireEvent: function () {
+        // mcinputイベントを発火する
+        triggerMcInput: function () {
+            // イベントオブジェクトと共にプラグインイベントを発火する
+            this.$elm.trigger($.Event(notImeEvent, this.obj));
+        },
+        // input2イベントを発火する
+        triggerInput2: function () {
+            // イベントオブジェクトと共にプラグインイベントを発火する
+            this.$elm.trigger($.Event(inputEvent, this.obj));
+        },
+        // 最終入力値と同じかどうかを判定してinputイベントを発火する
+        triggerInput: function () {
             if (!this.isSameVal()) {
-                // 最終入力値をセットする
-                this.setLastVal();
-                // イベントオブジェクトと共にプラグインイベントを発火する
-                this.$elm.trigger($.Event(eventName, this.obj));
+                this.$elm.trigger('input');
             }
+        },
+        // 遅れてイベントを発火する
+        setDelayInputEvent: function () {
+            clearTimeout(this.timer);
+            this.timer = setTimeout(this.triggerInput.bind(this), 50);
         },
         // 入力前の値と現在の値が同じか確認する
         isSameVal: function () {
@@ -151,11 +202,10 @@
                     this.$elm.html();
         }
     };
-
     // プラグインの実行
     $.fn[pluginName] = function (method) {
         // CompositionEventをサポートする時のみ実行
-        if ('CompositionEvent' in window) {
+        if (window.hasOwnProperty('CompositionEvent')) {
             // デフォルトのメソッドをonにする
             method = method || 'on';
             // エレメントごとにループする
@@ -165,11 +215,11 @@
                         $.data(this, pluginName, new Plugin(this));
                 // プロトタイプの関数に引数が存在する場合は関数の実行
                 switch (method) {
-                    // 有効化(on)、無効化(off)、破棄(destroy)、強制発火(fireEvent)
+                    // 有効化(on)、無効化(off)、破棄(destroy)、強制発火(triggerEvent)
                     case 'on':
                     case 'off':
                     case 'destroy':
-                    case 'fireEvent':
+                    case 'triggerEvent':
                         data[method]();
                         break;
                 }
