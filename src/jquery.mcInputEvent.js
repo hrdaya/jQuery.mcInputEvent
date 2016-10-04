@@ -142,11 +142,8 @@
                 case 'compositionend':
                     // IME入力中フラグのリセット
                     this.isComposition = false;
-                    // MS系ブラウザでIME入力後にイベントが発火しない事への対策
-                    // 他ブラウザと合わせるために値が同じでも発火させる
-                    if (isMsBrowser) {
-                        this.triggerEvent();
-                    }
+                    // Chromeが最新版でイベント発火しなくなったため、どの状況でも発火させる
+                    this.triggerEvent();
                     break;
                 case 'focus':
                     // フォーカスを受けた時にselectionchangeイベントを有効にする
